@@ -2,18 +2,15 @@
 
 import time
 
-def do(driver):
+def do(driver, last_top: int=1):
     win_height = driver.execute_script("return window.innerHeight")
-
-
-    last_top = 1
 
     while True:
 
         last_height = driver.execute_script("return document.body.scrollHeight")
         
         
-        top = last_top
+        top = last_top - 1
 
         
         while top < last_height:

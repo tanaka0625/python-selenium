@@ -33,9 +33,26 @@ try:
     time.sleep(5) #ページの更新が終わるのを待つ
 
     #無限スクロール
-    scroll.do(driver)
+    scroll.do(driver,1)
 
-    time.sleep(10)
+    time.sleep(5) #ページの更新が終わるのを待つ
+
+    # もっと見るボタンを取得
+    next_btn = driver.find_element(By.XPATH, "//h3/div/span[@class='RVQdVd']")
+
+    # もっと見るボタンを押下
+    next_btn.click()
+
+    time.sleep(5)
+
+    #無限スクロール
+    now_height = driver.execute_script("return document.body.scrollHeight")
+    print(now_height)
+    scroll.do(driver,now_height)
+
+    time.sleep(5)
+
+
 
     # ページのソースコードを取得
     html = driver.page_source.encode('utf-8')
@@ -44,50 +61,18 @@ try:
     soup = BeautifulSoup(html, 'html.parser')
     selector1 = ".LC20lb"
     titles = soup.select(selector1)
-    # print(len(titles))
-
-    # for title in titles:
-    #     print(title.text)
-    #     print('')
-
-    # driver.quit()
-
-    #タイトルのリンクを収集
-    # selector2 = ".yuRUbf > div > span > a"
-    # links = soup.select(selector2)
-    # # print(links[0]['href'])
-
-
-    # print(len(links))
-
-    # for link in links:
-    #     print(link["href"])
-    #     print('')
 
 
     # 出力用の配列を作成
     items = []
     for i in range(len(titles)):
         title = titles[i].text
-        # link = links[i]["href"]
         link = titles[i].parent["href"]
         item = [title, link]
 
         items.append(item)
 
-        print(items[i])
-        print("")
-        print(i)
-    
-    # print(len(items))
-
-    
-
-
-    # time.sleep(30)
-
-
-
+    time.sleep(5)
 
     driver.quit()
 
