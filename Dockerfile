@@ -23,3 +23,4 @@ RUN python -m pip install oauth2client
 RUN python -m pip install google-api-python-client
 RUN python -m pip install google-auth-httplib2
 RUN python -m pip install google-auth-oauthlib
+RUN python -m pip install pandas

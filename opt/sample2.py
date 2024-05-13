@@ -1,11 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
-import requests
 from bs4 import BeautifulSoup
 import time
-
+import pandas as pd
 import scroll
+import gspread
+import datetime
+
+import make_credentials
 
 
 options = webdriver.ChromeOptions()
@@ -66,13 +68,50 @@ try:
     # 出力用の配列を作成
     items = []
     for i in range(len(titles)):
-        title = titles[i].text
-        link = titles[i].parent["href"]
-        item = [title, link]
+        if(i==0):
+            item = ["タイトル", "リンク"]
+        elif(i>0):
+            title = titles[i].text
+            link = titles[i].parent["href"]
+            item = [title, link]
 
         items.append(item)
 
+
     time.sleep(5)
+
+
+    # 検索結果をデータフレームに成型
+    df = pd.DataFrame(items)
+    print(df)
+
+    scopes = [
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive'
+    ]
+
+    key_pass = "./key.json"
+
+    # credentials作成
+    credentials = make_credentials.do(scopes, key_pass)
+
+    # Auth2のクレデンシャルを使用してGoogleAPIにログイン
+    gc = gspread.authorize(credentials)
+
+    # スプレッドシートの新規作成
+    dt_now = datetime.datetime.now().strftime("%Y/%m/%d/ %H:%M:%S")
+    name = dt_now
+    ss = gc.create(name, "1dATyJ6wK3jpw3_otIGVY6VnNpoiGWc0h")
+
+    # シートを特定する（シートインデックスで特定）
+    st = ss.get_worksheet(0) #0は左から1番目のシート
+
+    # シート名変更
+    st_name = "記事一覧"
+    st.update_title(st_name)
+
+    # 書き込み
+    st.append_rows(values=items, table_range='B2')
 
     driver.quit()
 
